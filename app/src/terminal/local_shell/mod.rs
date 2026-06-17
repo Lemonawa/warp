@@ -178,7 +178,13 @@ impl LocalShellState {
                 ctx.spawn(
                     async move { capture_interactive_shell_env(shell_type, shell_path).await },
                     move |me, result, _ctx| {
-                        let path = result.ok();
+                        let path = result
+                            .inspect_err(|e| {
+                                log::warn!(
+                                    "Failed to capture interactive shell environment: {e:#}"
+                                );
+                            })
+                            .ok();
 
                         // Notify all waiting receivers
                         if let LocalShellState::Loaded(local_shell) = me {

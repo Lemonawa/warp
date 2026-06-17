@@ -2295,7 +2295,7 @@ fn read_node(conn: &mut SqliteConnection, node: model::PaneNode) -> Result<PaneN
                         .find(node.id)
                         .select(model::CodeReviewPane::as_select())
                         .first(conn)
-                        .ok();
+                        .optional()?;
 
                     match code_review_pane {
                         Some(pane) => LeafContents::CodeReview(CodeReviewPaneSnapshot::Local {

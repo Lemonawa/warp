@@ -83,7 +83,12 @@ impl ThemeDeletionBody {
                         // We don't want to delete images from other parts of the user's filesystem.
                         if let AssetSource::LocalFile { path } = image.source() {
                             let image_path_in_themes_dir = dir.join(path.as_str());
-                            let _ = remove_file(image_path_in_themes_dir);
+                            if let Err(e) = remove_file(&image_path_in_themes_dir) {
+                                log::warn!(
+                                    "Failed to delete theme image at {}: {e}",
+                                    image_path_in_themes_dir.display()
+                                );
+                            }
                         } else {
                             log::warn!("Attempted to delete a custom theme image with an unexpected image source");
                         }

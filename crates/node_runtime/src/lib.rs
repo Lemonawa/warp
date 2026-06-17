@@ -370,7 +370,9 @@ where
     // Now do async file I/O
     for (outpath, data) in files_to_write {
         if let Some(parent) = outpath.parent() {
-            async_fs::create_dir_all(parent).await.ok();
+            async_fs::create_dir_all(parent)
+                .await
+                .with_context(|| format!("Failed to create directory: {:?}", parent))?;
         }
 
         let mut outfile = async_fs::File::create(&outpath)

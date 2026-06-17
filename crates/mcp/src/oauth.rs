@@ -117,10 +117,12 @@ impl CredentialStore for PersistingCredentialStore {
 
         // Only persist credentials if we actually have any.
         if credentials.token_response.is_some() {
-            let _ = self.persist_tx.try_send(PersistedCredentials {
+            if let Err(e) = self.persist_tx.try_send(PersistedCredentials {
                 credentials,
                 client_secret: self.client_secret.clone(),
-            });
+            }) {
+                log::error!("Failed to enqueue MCP credential persistence: {e}");
+            }
         }
         Ok(())
     }
@@ -154,7 +156,9 @@ async fn install_persisting_credential_store(
 
     // If we have persisted credentials, populate the backing in-memory store with them.
     if let Some(credentials) = persisted_credentials {
-        let _ = in_memory_store.save(credentials.credentials).await;
+        if let Err(e) = in_memory_store.save(credentials.credentials).await {
+            log::error!("Failed to restore persisted MCP credentials to in-memory store: {e}");
+        }
     }
 
     let (persist_tx, persist_rx) = async_channel::unbounded();

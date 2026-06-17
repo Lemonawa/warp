@@ -196,6 +196,7 @@ impl SearcherReaderWrapper {
             .reader_builder()
             .reload_policy(ReloadPolicy::Manual)
             .try_into()
+            .inspect_err(|e| log::warn!("Failed to build search index reader: {e}"))
             .ok();
         Self {
             search_index,
@@ -475,6 +476,7 @@ impl SearcherWriterWrapper {
         );
         let writer = search_index
             .writer_with_num_threads(memory_budget, num_threads)
+            .inspect_err(|e| log::warn!("Failed to create search index writer: {e}"))
             .ok();
 
         SearcherWriterWrapper {
