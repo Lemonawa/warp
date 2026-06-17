@@ -2924,6 +2924,7 @@ dependencies = [
  "pathfinder_geometry",
  "schemars",
  "serde",
+ "serde_json",
  "session-sharing-protocol",
  "settings_value",
  "thiserror 2.0.17",
@@ -6927,6 +6928,7 @@ dependencies = [
  "rand 0.8.6",
  "serde",
  "thiserror 2.0.17",
+ "tokio",
  "uuid",
  "warpui_core",
 ]
@@ -15717,6 +15719,7 @@ dependencies = [
  "anyhow",
  "async-channel",
  "futures",
+ "instant",
  "log",
  "notify-debouncer-full",
  "warpui_core",

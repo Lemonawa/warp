@@ -31,6 +31,10 @@ pub mod models;
 mod server_object;
 mod update;
 
+#[cfg(test)]
+#[path = "mod_tests.rs"]
+mod tests;
+
 pub use creation::*;
 pub use generic_cloud_object::*;
 pub use generic_string_model::*;

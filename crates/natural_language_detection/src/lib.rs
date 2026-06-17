@@ -7,6 +7,10 @@ use word_list::{COMMAND_LIST, STACK_OVERFLOW_LIST, WORD_LIST};
 
 mod word_list;
 
+#[cfg(test)]
+#[path = "lib_tests.rs"]
+mod tests;
+
 lazy_static! {
     /// Regex for matching contractions to reduce them into root forms. E.g. he's => he, mustn't => must.
     static ref CONTRACTION_REGEX: Regex = Regex::new(r"('s|'re|n't|'t|'m|'ve|'ll)$")

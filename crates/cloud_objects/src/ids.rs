@@ -6,6 +6,10 @@ use uuid::Uuid;
 
 use crate::cloud_object::ObjectIdType;
 
+#[cfg(test)]
+#[path = "ids_tests.rs"]
+mod tests;
+
 /// Convert ID enums into and from a hashed UUID.
 pub trait HashableId: Sized + Send + Sync {
     fn to_hash(&self) -> String;
