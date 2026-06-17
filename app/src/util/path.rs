@@ -11,6 +11,7 @@ use is_executable::IsExecutable as _;
 #[cfg(not(target_family = "wasm"))]
 use itertools::Itertools as _;
 use warp_util::local_or_remote_path::LocalOrRemotePath;
+use warp_util::path::tildify_path;
 use warpui::{AppContext, SingletonEntity};
 
 use crate::remote_server::manager::RemoteServerManager;
@@ -48,10 +49,7 @@ pub fn display_path_with_host(
     match path {
         LocalOrRemotePath::Local(local_path) => {
             if abbreviate_home {
-                dirs::home_dir()
-                    .and_then(|home| local_path.strip_prefix(&home).ok())
-                    .map(|relative| format!("~/{}", relative.display()))
-                    .unwrap_or_else(|| local_path.display().to_string())
+                tildify_path(local_path)
             } else {
                 path.display_path()
             }
