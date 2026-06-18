@@ -9,6 +9,10 @@ use uuid::Uuid;
 
 use super::service::ServiceId;
 
+#[cfg(test)]
+#[path = "protocol_tests.rs"]
+mod tests;
+
 /// The size of a usize, in bytes.
 const USIZE_SIZE: usize = std::mem::size_of::<usize>();
 

@@ -6,6 +6,11 @@ use std::thread;
 use std::time::Duration;
 
 pub mod home_watcher;
+
+#[cfg(test)]
+#[path = "lib_tests.rs"]
+mod tests;
+
 use anyhow::Result;
 use futures::channel::oneshot;
 pub use home_watcher::{HomeDirectoryWatcher, HomeDirectoryWatcherEvent};
