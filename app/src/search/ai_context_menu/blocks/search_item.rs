@@ -14,25 +14,14 @@ use crate::search::ai_context_menu::styles;
 use crate::search::item::SearchItem;
 use crate::search::result_renderer::ItemHighlightState;
 use crate::terminal::model::block::BlockId;
+use crate::util::time_format::format_approx_duration_from_now;
 use crate::util::truncation::truncate_from_end;
 
-/// Calculate how long ago a timestamp was
+/// Format an optional timestamp as a relative "time ago" string.
 fn time_ago_string(timestamp: Option<&DateTime<Local>>) -> String {
-    let Some(timestamp) = timestamp else {
-        return "Just now".to_string();
-    };
-
-    let now = Local::now();
-    let duration = now.signed_duration_since(*timestamp);
-
-    if duration.num_seconds() < 60 {
-        "Just now".to_string()
-    } else if duration.num_minutes() < 60 {
-        format!("{} minutes ago", duration.num_minutes())
-    } else if duration.num_hours() < 24 {
-        format!("{} hours ago", duration.num_hours())
-    } else {
-        format!("{} days ago", duration.num_days())
+    match timestamp {
+        Some(ts) => format_approx_duration_from_now(*ts),
+        None => "just now".to_string(),
     }
 }
 

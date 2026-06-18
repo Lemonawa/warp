@@ -1,6 +1,8 @@
 use std::cmp::Ordering;
 use std::path::PathBuf;
 
+use warp_util::path::tildify_path;
+
 use chrono::NaiveDateTime;
 use fuzzy_match::FuzzyMatchResult;
 use ordered_float::OrderedFloat;
@@ -29,13 +31,7 @@ pub struct ProjectSearchItem {
 
 /// Extracts a display name from a project path (returns relative path from home directory).
 fn project_display_name(project_path: &str) -> String {
-    let path = PathBuf::from(project_path);
-
-    // Try to create a relative path from the user's home directory
-    dirs::home_dir()
-        .and_then(|home| path.strip_prefix(&home).ok())
-        .map(|relative_path| format!("~/{}", relative_path.display()))
-        .unwrap_or_else(|| project_path.to_string())
+    tildify_path(&PathBuf::from(project_path))
 }
 
 impl ProjectSearchItem {

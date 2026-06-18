@@ -15,6 +15,7 @@ use crate::search::command_palette::render_util;
 use crate::search::item::SearchItem;
 use crate::search::result_renderer::ItemHighlightState;
 use crate::ui_components::icons::Icon as UiIcon;
+use warp_util::path::tildify_path;
 
 #[derive(Debug)]
 pub struct RepoSearchItem {
@@ -24,11 +25,7 @@ pub struct RepoSearchItem {
 }
 
 fn repo_display_name(repo_path: &Path) -> String {
-    // Try to create a relative path from the user's home directory
-    dirs::home_dir()
-        .and_then(|home| repo_path.strip_prefix(&home).ok())
-        .map(|relative_path| format!("~/{}", relative_path.display()))
-        .unwrap_or_else(|| repo_path.display().to_string())
+    tildify_path(repo_path)
 }
 
 impl RepoSearchItem {

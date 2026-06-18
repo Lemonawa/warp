@@ -26,25 +26,16 @@ use crate::appearance::Appearance;
 use crate::send_telemetry_from_ctx;
 use crate::ui_components::icon_with_status::{render_icon_with_status, IconWithStatusVariant};
 use crate::util::time_format::format_elapsed_since;
+use crate::util::truncation::truncate_from_end;
 use crate::view_components::action_button::ActionButtonTheme;
 use crate::workspace::WorkspaceAction;
 
 const COLLAPSED_MAX_CHARS: usize = 100;
 const EXPANDED_MAX_CHARS: usize = 500;
 
-fn truncate_text(text: &str, max_chars: usize) -> String {
-    if text.chars().count() > max_chars - 3 {
-        let truncated: String = text.chars().take(max_chars).collect();
-        format!("{truncated}…")
-    } else {
-        text.to_owned()
-    }
-}
-
-/// Returns true when either the title or message would be truncated by `truncate_text`.
+/// Returns true when either the title or message would be truncated at the collapsed limit.
 fn content_is_truncated(title: &str, message: &str) -> bool {
-    title.chars().count() > COLLAPSED_MAX_CHARS - 3
-        || message.chars().count() > COLLAPSED_MAX_CHARS - 3
+    title.chars().count() > COLLAPSED_MAX_CHARS || message.chars().count() > COLLAPSED_MAX_CHARS
 }
 
 /// Determines toast-vs-mailbox rendering differences.
@@ -362,7 +353,7 @@ fn render_clamped_title(title: &str, expanded: bool, appearance: &Appearance) ->
 
     appearance
         .ui_builder()
-        .wrappable_text(truncate_text(title, max), true)
+        .wrappable_text(truncate_from_end(title, max), true)
         .with_style(UiComponentStyles {
             font_size: Some(14.),
             font_weight: Some(Weight::Semibold),
@@ -385,7 +376,7 @@ fn render_message_text(message: &str, expanded: bool, appearance: &Appearance) -
 
     appearance
         .ui_builder()
-        .wrappable_text(truncate_text(message, max), true)
+        .wrappable_text(truncate_from_end(message, max), true)
         .with_style(UiComponentStyles {
             font_size: Some(14.),
             font_color: Some(theme.sub_text_color(theme.surface_1()).into()),

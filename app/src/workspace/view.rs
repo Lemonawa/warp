@@ -5042,14 +5042,7 @@ impl Workspace {
                     .pane_group
                     .as_ref(ctx)
                     .active_session_path(ctx)
-                    .map(|p| {
-                        if let Some(home) = dirs::home_dir() {
-                            if let Ok(stripped) = p.strip_prefix(&home) {
-                                return format!("~/{}", stripped.display());
-                            }
-                        }
-                        p.display().to_string()
-                    });
+                    .map(|p| warp_util::path::tildify_path(&p));
                 Some(TabNavigationData {
                     pane_group_id,
                     title,

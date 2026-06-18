@@ -17,6 +17,7 @@ use crate::search::SearchItem;
 use crate::terminal::input::inline_menu::styles as inline_styles;
 use crate::terminal::input::repos::AcceptRepo;
 use crate::util::git::RepoGitSummary;
+use warp_util::path::tildify_path;
 
 /// Search item for rendering a repo in the inline repo menu.
 #[derive(Debug, Clone)]
@@ -45,10 +46,7 @@ impl RepoSearchItem {
 }
 
 fn repo_display_name(repo_path: &Path) -> String {
-    dirs::home_dir()
-        .and_then(|home| repo_path.strip_prefix(&home).ok().map(|p| p.to_path_buf()))
-        .map(|relative_path| format!("~/{}", relative_path.display()))
-        .unwrap_or_else(|| repo_path.display().to_string())
+    tildify_path(repo_path)
 }
 
 impl SearchItem for RepoSearchItem {

@@ -116,6 +116,18 @@ pub fn user_friendly_path<'a>(path: &'a str, home_dir: Option<&str>) -> Cow<'a, 
         .unwrap_or(Cow::Borrowed(path))
 }
 
+/// Abbreviates a `Path` by replacing the user's home directory prefix with `~`.
+///
+/// Returns a tilde-prefixed string (e.g. `~/projects/foo`) when the path lives under
+/// the home directory, or the full path display otherwise. This is the `Path`-based
+/// counterpart of [`user_friendly_path`], which operates on string slices.
+pub fn tildify_path(path: &Path) -> String {
+    dirs::home_dir()
+        .and_then(|home| path.strip_prefix(&home).ok().map(|p| p.to_path_buf()))
+        .map(|relative| format!("~/{}", relative.display()))
+        .unwrap_or_else(|| path.display().to_string())
+}
+
 /// Result after parsing a path string that mixes path and line and column numbers
 /// into each individual components.
 #[derive(Clone, Debug, PartialEq, Eq)]
