@@ -120,10 +120,12 @@ impl ReferralThemeStatus {
                         self.received_referral_theme = ReferralThemeFetchStatus::Inactive;
                     }
                     // Store any new value in user defaults
-                    let _ = ctx.private_user_preferences().write_value(
+                    if let Err(e) = ctx.private_user_preferences().write_value(
                         RECEIVED_REFERRAL_THEME_KEY,
                         self.received_referral_theme.to_json(),
-                    );
+                    ) {
+                        log::error!("Failed to persist referral theme status: {e:#}");
+                    }
                 }
             }
             Err(e) => {

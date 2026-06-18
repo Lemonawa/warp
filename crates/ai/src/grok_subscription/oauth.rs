@@ -277,8 +277,12 @@ fn handle_callback_connection(mut stream: TcpStream) -> anyhow::Result<Option<Ca
     // The accepted stream may inherit the listener's non-blocking flag on some
     // platforms; force blocking reads with a timeout so we get the full request
     // line without spinning.
-    stream.set_nonblocking(false).ok();
-    stream.set_read_timeout(Some(Duration::from_secs(10))).ok();
+    stream
+        .set_nonblocking(false)
+        .context("failed to set blocking mode on OAuth callback stream")?;
+    stream
+        .set_read_timeout(Some(Duration::from_secs(10)))
+        .context("failed to set read timeout on OAuth callback stream")?;
 
     let mut buf = [0u8; 8192];
     let n = stream
@@ -369,9 +373,16 @@ fn write_response(stream: &mut TcpStream, status: &str, body: &str, origin: Opti
          {cors_headers}Content-Length: {}\r\nConnection: close\r\n\r\n{body}",
         body.len()
     );
-    let _ = stream.write_all(response.as_bytes());
-    let _ = stream.flush();
-    let _ = stream.shutdown(Shutdown::Both);
+    if let Err(e) = stream.write_all(response.as_bytes()) {
+        log::warn!("Grok OAuth callback: failed to write response: {e}");
+        return;
+    }
+    if let Err(e) = stream.flush() {
+        log::warn!("Grok OAuth callback: failed to flush response: {e}");
+    }
+    if let Err(e) = stream.shutdown(Shutdown::Both) {
+        log::debug!("Grok OAuth callback: failed to shutdown stream: {e}");
+    }
 }
 
 fn cors_headers(origin: Option<&str>) -> String {

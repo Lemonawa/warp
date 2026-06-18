@@ -4543,10 +4543,12 @@ impl Workspace {
 
     fn dismiss_ai_assistant_warm_welcome(&mut self, ctx: &mut ViewContext<Self>) {
         self.should_show_ai_assistant_warm_welcome = false;
-        let _ = ctx.private_user_preferences().write_value(
+        if let Err(e) = ctx.private_user_preferences().write_value(
             settings::DISMISSED_AI_ASSISTANT_WELCOME_KEY,
             true.to_string(),
-        );
+        ) {
+            log::error!("Failed to persist AI assistant welcome dismissal: {e:#}");
+        }
         ctx.notify();
     }
 

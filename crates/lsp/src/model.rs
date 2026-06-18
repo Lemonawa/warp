@@ -459,7 +459,9 @@ impl LspServerModel {
                 };
                 executor
                     .spawn(async move {
-                        let _ = service.shutdown().await;
+                        if let Err(e) = service.shutdown().await {
+                            log::warn!("LSP server shutdown returned an error: {e:#}");
+                        }
                     })
                     .detach();
             }

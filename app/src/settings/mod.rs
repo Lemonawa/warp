@@ -514,10 +514,12 @@ impl Settings {
                 );
 
                 versions[&changelog_version] = Value::Bool(true);
-                let _ = ctx.private_user_preferences().write_value(
+                if let Err(e) = ctx.private_user_preferences().write_value(
                     CHANGELOG_VERSIONS,
                     serde_json::to_string(&versions).expect("changelog versions should serialize"),
-                );
+                ) {
+                    log::error!("Failed to persist changelog version state: {e:#}");
+                }
                 true
             })
     }

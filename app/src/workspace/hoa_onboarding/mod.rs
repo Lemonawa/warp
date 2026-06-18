@@ -17,8 +17,10 @@ pub fn has_completed_hoa_onboarding(ctx: &AppContext) -> bool {
 }
 
 pub fn mark_hoa_onboarding_completed(ctx: &AppContext) {
-    let _ = ctx.private_user_preferences().write_value(
+    if let Err(e) = ctx.private_user_preferences().write_value(
         HAS_COMPLETED_HOA_ONBOARDING_KEY,
         serde_json::to_string(&true).expect("bool serializes to JSON"),
-    );
+    ) {
+        log::error!("Failed to persist HOA onboarding completion state: {e:#}");
+    }
 }

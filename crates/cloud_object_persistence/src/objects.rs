@@ -8,7 +8,9 @@ use cloud_objects::cloud_object::{
 };
 use cloud_objects::ids::{ClientId, FolderId, HashableId, SyncId, ToServerId};
 use diesel::result::Error;
-use diesel::{Connection, ExpressionMethods, QueryDsl, RunQueryDsl, SqliteConnection};
+use diesel::{
+    Connection, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SqliteConnection,
+};
 use persistence::model::{
     GenericStringObject as PersistedGenericStringObject, NewGenericStringObject, NewObjectMetadata,
     NewObjectPermissions, ObjectMetadata, ObjectPermissions,
@@ -204,7 +206,7 @@ pub fn upsert_cloud_object(
     let metadata_filter = object_metadata
         .filter(client_id.eq(Some(hashed_sync_id.as_str())))
         .or_filter(server_id.eq(Some(hashed_sync_id.as_str())));
-    let metadata: Option<ObjectMetadata> = metadata_filter.first(conn).ok();
+    let metadata: Option<ObjectMetadata> = metadata_filter.first(conn).optional()?;
 
     match metadata {
         Some(metadata) => {

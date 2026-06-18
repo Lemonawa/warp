@@ -1572,10 +1572,12 @@ pub(crate) fn has_completed_local_onboarding(ctx: &AppContext) -> bool {
 
 /// Persists the local onboarding-completed flag so we don't show onboarding again.
 fn mark_local_onboarding_completed(ctx: &AppContext) {
-    let _ = ctx.private_user_preferences().write_value(
+    if let Err(e) = ctx.private_user_preferences().write_value(
         HAS_COMPLETED_ONBOARDING_KEY,
         serde_json::to_string(&true).expect("bool serializes to JSON"),
-    );
+    ) {
+        log::error!("Failed to persist onboarding completion state: {e:#}");
+    }
 }
 
 /// Whether auth and onboarding have completed and we should render the `Workspace`.
