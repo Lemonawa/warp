@@ -10,6 +10,11 @@ ignore = [
     { id = "RUSTSEC-2020-0077", reason = "memmap is unmaintained; we should migrate to memmap2." },
     { id = "RUSTSEC-2024-0436", reason = "paste is unmaintained; this is a dependency of metal, which we should eliminate by moving to the objc2 family of crates."},
     { id = "RUSTSEC-2023-0081", reason = "safemem is unmaintained; this is a dependency of plist." },
+    { id = "RUSTSEC-2026-0172", reason = "diesel unsoundness in deserialize_readonly_database; not called in this codebase." },
+    { id = "RUSTSEC-2026-0183", reason = "git2 unsoundness in Remote::list(); not called in this codebase." },
+    { id = "RUSTSEC-2025-0119", reason = "number_prefix is unmaintained; consider replacing." },
+    { id = "RUSTSEC-2025-0134", reason = "rustls-pemfile is unmaintained; consider replacing." },
+    { id = "RUSTSEC-2026-0105", reason = "core2 is unmaintained and yanked; consider replacing." },
 ]
 
 [licenses]
